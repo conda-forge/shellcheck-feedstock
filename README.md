@@ -3,7 +3,7 @@ About shellcheck
 
 Home: https://github.com/koalaman/shellcheck
 
-Package license: GPL-3.0
+Package license: GPL-3.0-only
 
 Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/shellcheck-feedstock/blob/master/LICENSE.txt)
 

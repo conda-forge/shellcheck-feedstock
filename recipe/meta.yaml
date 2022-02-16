@@ -7,12 +7,8 @@ package:
   version: {{ version }}
 
 source:
-  - url: https://github.com/koalaman/{{ name }}/archive/v{{ version }}.tar.gz  # [not linux]
-    sha256: dad3a2140389f5032996e6d381a47074ddbad6e5d9155f72ef732952c8861a3b  # [not linux]
-  - url: https://github.com/koalaman/{{ name }}/releases/download/v{{ version }}/{{ name }}-v{{ version }}.linux.x86_64.tar.xz  # [linux64]
-    sha256: ab6ee1b178f014d1b86d1e24da20d1139656c8b0ed34d2867fbb834dad02bf0a  # [linux64]
-  - url: https://github.com/koalaman/{{ name }}/releases/download/v{{ version }}/{{ name }}-v{{ version }}.linux.aarch64.tar.xz  # [aarch64]
-    sha256: 9f47bbff5624babfa712eb9d64ece14c6c46327122d0c54983f627ae3a30a4ac  # [aarch64]
+  - url: https://github.com/koalaman/{{ name }}/archive/v{{ version }}.tar.gz
+    sha256: dad3a2140389f5032996e6d381a47074ddbad6e5d9155f72ef732952c8861a3b
 
 build:
   number: 0
@@ -22,14 +18,17 @@ build:
 
 requirements:
   build:
-    - stack                     # [not linux]
-    - {{ native }}binutils
+    - stack
+    - {{ compiler('c') }}   # [linux]
+    - {{ native }}binutils  # [not linux]
+    - make                  # [linux]
+    - perl                  # [linux]
 
   host:
-    - gmp  # [osx]
+    - gmp  # [linux]
 
   run:
-    - gmp  # [osx]
+    - gmp  # [linux]
 
 test:
   commands:

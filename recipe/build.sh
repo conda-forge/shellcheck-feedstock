@@ -12,19 +12,17 @@ mkdir -p "${PACKAGE_HOME}"
 mkdir -p "${STACK_ROOT}"
 
 STACK_OPTS="\
+--verbose \
 --local-bin-path ${PREFIX}/bin \
 --extra-include-dirs ${PREFIX}/include \
 --extra-lib-dirs ${PREFIX}/lib \
---stack-root ${STACK_ROOT} "
+--stack-root ${STACK_ROOT}"
 
-if [[ $target_platform =~ linux.* ]]; then
-  install shellcheck "$PREFIX/bin/shellcheck"
-  strip --strip-all "$PREFIX/bin/shellcheck"
-else
-  stack ${STACK_OPTS} setup
-  stack ${STACK_OPTS} install --ghc-options \
-    "-optlo-Os -optl-L${PREFIX}/lib -optl-Wl,-rpath,${PREFIX}/lib"
-  strip "$PREFIX/bin/shellcheck"
-fi
+
+stack ${STACK_OPTS} setup
+stack ${STACK_OPTS} install --ghc-options \
+  "-optlo-Os -optl-L${PREFIX}/lib -optl-Wl,-rpath,${PREFIX}/lib"
+strip "$PREFIX/bin/shellcheck"
+
 
 rm -rf "${PACKAGE_HOME}"
