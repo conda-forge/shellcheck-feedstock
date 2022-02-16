@@ -157,4 +157,5 @@ Feedstock Maintainers
 =====================
 
 * [@dbast](https://github.com/dbast/)
+* [@matthiasdiener](https://github.com/matthiasdiener/)
 
