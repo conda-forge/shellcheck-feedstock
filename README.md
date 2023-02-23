@@ -192,6 +192,3 @@ Feedstock Maintainers
 
 * [@dbast](https://github.com/dbast/)
 
-
-<!-- dummy commit to enable rerendering -->
-
