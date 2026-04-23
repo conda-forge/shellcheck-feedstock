@@ -19,12 +19,12 @@ STACK_OPTS="\
 
 if [[ $target_platform =~ linux.* ]]; then
   install shellcheck "$PREFIX/bin/shellcheck"
-  strip --strip-all "$PREFIX/bin/shellcheck"
+  ${STRIP:-strip} --strip-all "$PREFIX/bin/shellcheck"
 else
   stack ${STACK_OPTS} setup
   stack ${STACK_OPTS} install --ghc-options \
     "-optlo-Os -optl-L${PREFIX}/lib -optl-Wl,-rpath,${PREFIX}/lib"
-  strip "$PREFIX/bin/shellcheck"
+  ${STRIP:-strip} "$PREFIX/bin/shellcheck"
 fi
 
 rm -rf "${PACKAGE_HOME}"

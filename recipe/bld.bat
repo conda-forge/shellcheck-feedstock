@@ -16,7 +16,7 @@ stack --local-bin-path "%PREFIX%\bin" ^
         "-optl-pthread -optlo-Os" ^
       || goto :error
 
-strip "%PREFIX%\bin\shellcheck.exe" || goto :error
+%STRIP% "%PREFIX%\bin\shellcheck.exe" || goto :error
 
 rmdir /S /Q "%PACKAGE_HOME%" || goto :error
 goto :EOF

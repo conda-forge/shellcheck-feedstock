@@ -3,19 +3,6 @@ About shellcheck-feedstock
 
 Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/shellcheck-feedstock/blob/main/LICENSE.txt)
 
-
-About shellcheck
-----------------
-
-Home: https://github.com/koalaman/shellcheck
-
-Package license: GPL-3.0-only
-
-Summary: ShellCheck, a static analysis tool for shell scripts
-
-About shellcheck
-----------------
-
 Home: https://github.com/koalaman/shellcheck
 
 Package license: GPL-3.0-only
@@ -51,6 +38,13 @@ Current build status
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=4951&branchName=main">
                   <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/shellcheck-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_" alt="variant">
+                </a>
+              </td>
+            </tr><tr>
+              <td>linux_ppc64le</td>
+              <td>
+                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=4951&branchName=main">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/shellcheck-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_ppc64le_" alt="variant">
                 </a>
               </td>
             </tr><tr>
