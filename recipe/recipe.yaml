@@ -1,0 +1,62 @@
+context:
+  name: shellcheck
+  version: "0.11.0"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  - if: not linux
+    then:
+      url: https://github.com/koalaman/${{ name }}/archive/v${{ version }}.tar.gz
+      sha256: 8b07554f92e4fbfc33f1539a1f475f21c6503ceae8f806efcc518b1f529f7102
+  - if: linux and x86_64
+    then:
+      url: https://github.com/koalaman/${{ name }}/releases/download/v${{ version }}/${{ name }}-v${{ version }}.linux.x86_64.tar.xz
+      sha256: 8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198
+  - if: linux and aarch64
+    then:
+      url: https://github.com/koalaman/${{ name }}/releases/download/v${{ version }}/${{ name }}-v${{ version }}.linux.aarch64.tar.xz
+      sha256: 12b331c1d2db6b9eb13cfca64306b1b157a86eb69db83023e261eaa7e7c14588
+
+build:
+  number: 1
+  dynamic_linking:
+    missing_dso_allowlist:
+      - if: osx
+        then: /usr/lib/libiconv.2.dylib
+
+requirements:
+  build:
+    - if: not linux
+      then: stack
+    - if: linux or win
+      then: ${{ "m2w64-" if win else "" }}binutils
+    - if: osx
+      then: llvm-tools 13.*
+  host:
+    - if: osx
+      then: gmp
+  run:
+    - if: osx
+      then: gmp
+
+tests:
+  - script:
+      - shellcheck --version
+      - shellcheck || true
+
+about:
+  homepage: https://github.com/koalaman/shellcheck
+  license: GPL-3.0-only
+  license_family: GPL
+  license_file:
+    - if: linux
+      then: LICENSE.txt
+      else: LICENSE
+  summary: ShellCheck, a static analysis tool for shell scripts
+
+extra:
+  recipe-maintainers:
+    - dbast
