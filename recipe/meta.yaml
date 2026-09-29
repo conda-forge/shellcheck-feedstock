@@ -15,7 +15,7 @@ source:
     sha256: 9f47bbff5624babfa712eb9d64ece14c6c46327122d0c54983f627ae3a30a4ac  # [aarch64]
 
 build:
-  number: 0
+  number: 1
 
   missing_dso_whitelist:
     - /usr/lib/libiconv.2.dylib  # [osx]
@@ -23,7 +23,8 @@ build:
 requirements:
   build:
     - stack                     # [not linux]
-    - {{ native }}binutils
+    - {{ native }}binutils      # [linux or win]
+    - llvm-tools 13.*           # [osx]
 
   host:
     - gmp  # [osx]
