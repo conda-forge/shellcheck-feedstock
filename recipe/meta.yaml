@@ -15,7 +15,7 @@ source:
     sha256: 12b331c1d2db6b9eb13cfca64306b1b157a86eb69db83023e261eaa7e7c14588  # [aarch64]
 
 build:
-  number: 1
+  number: 2
 
   missing_dso_whitelist:
     - /usr/lib/libiconv.2.dylib  # [osx]
