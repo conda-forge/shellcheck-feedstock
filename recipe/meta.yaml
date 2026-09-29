@@ -1,5 +1,5 @@
 {% set name = "shellcheck" %}
-{% set version = "0.11.0" %}
+{% set version = "0.8.0" %}
 {% set native = 'm2w64-' if win else '' %}
 
 package:
@@ -8,11 +8,11 @@ package:
 
 source:
   - url: https://github.com/koalaman/{{ name }}/archive/v{{ version }}.tar.gz  # [not linux]
-    sha256: 8b07554f92e4fbfc33f1539a1f475f21c6503ceae8f806efcc518b1f529f7102  # [not linux]
+    sha256: dad3a2140389f5032996e6d381a47074ddbad6e5d9155f72ef732952c8861a3b  # [not linux]
   - url: https://github.com/koalaman/{{ name }}/releases/download/v{{ version }}/{{ name }}-v{{ version }}.linux.x86_64.tar.xz  # [linux64]
-    sha256: 8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198  # [linux64]
+    sha256: ab6ee1b178f014d1b86d1e24da20d1139656c8b0ed34d2867fbb834dad02bf0a  # [linux64]
   - url: https://github.com/koalaman/{{ name }}/releases/download/v{{ version }}/{{ name }}-v{{ version }}.linux.aarch64.tar.xz  # [aarch64]
-    sha256: 12b331c1d2db6b9eb13cfca64306b1b157a86eb69db83023e261eaa7e7c14588  # [aarch64]
+    sha256: 9f47bbff5624babfa712eb9d64ece14c6c46327122d0c54983f627ae3a30a4ac  # [aarch64]
 
 build:
   number: 1
