@@ -15,6 +15,7 @@ case "$(uname -s)/$(uname -m)" in
   Linux/x86_64) build_platform=linux-64 ;;
   Linux/aarch64) build_platform=linux-aarch64 ;;
   Linux/ppc64le) build_platform=linux-ppc64le ;;
+  Linux/riscv64) build_platform=linux-riscv64 ;;
   Darwin/x86_64) build_platform=osx-64 ;;
   Darwin/arm64) build_platform=osx-arm64 ;;
   *)

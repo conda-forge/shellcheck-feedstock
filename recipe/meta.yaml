@@ -13,6 +13,8 @@ source:
     sha256: 8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198  # [linux64]
   - url: https://github.com/koalaman/{{ name }}/releases/download/v{{ version }}/{{ name }}-v{{ version }}.linux.aarch64.tar.xz  # [aarch64]
     sha256: 12b331c1d2db6b9eb13cfca64306b1b157a86eb69db83023e261eaa7e7c14588  # [aarch64]
+  - url: https://github.com/koalaman/{{ name }}/releases/download/v{{ version }}/{{ name }}-v{{ version }}.linux.riscv64.tar.xz  # [riscv64]
+    sha256: 693c987777e7b524dd311d9b8c704885a39c889c9804bb1ef1fd29b48567b0b3  # [riscv64]
 
 build:
   number: 2
