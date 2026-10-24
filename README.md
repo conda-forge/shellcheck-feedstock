@@ -221,4 +221,5 @@ Feedstock Maintainers
 =====================
 
 * [@dbast](https://github.com/dbast/)
+* [@pavelzw](https://github.com/pavelzw/)
 
