@@ -22,6 +22,11 @@ if /I not "%build_platform%"=="%target_platform%" (
   exit 1
 )
 
+@rem rattler-build points USERPROFILE at the work directory. Cabal's Setup
+@rem resolves the AppData folder through SHGetFolderPath, which expands it to
+@rem %USERPROFILE%\AppData\Roaming and fails when that folder does not exist.
+mkdir "%USERPROFILE%\AppData\Roaming" || goto :error
+
 set "BINARY_HOME=%PREFIX%\bin"
 set "PACKAGE_HOME=%PREFIX%\share\%PKG_NAME%-%PKG_VERSION%-%PKG_BUILDNUM%"
 set "STACK_ROOT=%PACKAGE_HOME%\stackroot"
