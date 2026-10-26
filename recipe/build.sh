@@ -7,9 +7,9 @@ set -o xtrace -o pipefail -o errexit
 # cross build does not fail -- it silently produces a package whose binary is
 # for the wrong architecture. That is how the osx-arm64 packages up to 0.10.0
 # ended up shipping x86_64 binaries and had to be marked broken, see
-# conda-forge/admin-requests#2370. The linux branch below does unpack a prebuilt
-# binary for ${target_platform}, but strips it with the build platform's
-# binutils, so it does not survive cross-compilation either.
+# conda-forge/admin-requests#2370. The linux-riscv64 branch below does unpack a
+# prebuilt binary for ${target_platform}, but strips it with the build
+# platform's binutils, so it does not survive cross-compilation either.
 # conda-build does not export ${build_platform}, so derive it from uname.
 case "$(uname -s)/$(uname -m)" in
   Linux/x86_64) build_platform=linux-64 ;;
@@ -30,29 +30,37 @@ if [[ "${build_platform}" != "${target_platform}" ]]; then
   exit 1
 fi
 
-BINARY_HOME=${PREFIX}/bin
-PACKAGE_HOME=${PREFIX}/share/${PKG_NAME}-${PKG_VERSION}-${PKG_BUILDNUM}
-export STACK_ROOT=${PACKAGE_HOME}/stackroot
-export LIBRARY_PATH=${LIBRARY_PATH}:${PREFIX}/lib # required for gmp etc. to be found
+mkdir -p "${PREFIX}/bin"
 
-mkdir -p "${BINARY_HOME}"
-mkdir -p "${PACKAGE_HOME}"
-mkdir -p "${STACK_ROOT}"
-
-STACK_OPTS="\
---local-bin-path ${PREFIX}/bin \
---extra-include-dirs ${PREFIX}/include \
---extra-lib-dirs ${PREFIX}/lib \
---stack-root ${STACK_ROOT} "
-
-if [[ $target_platform =~ linux.* ]]; then
-  install shellcheck "$PREFIX/bin/shellcheck"
-  strip --strip-all "$PREFIX/bin/shellcheck"
-else
-  stack ${STACK_OPTS} setup
-  stack ${STACK_OPTS} install --ghc-options \
-    "-optlo-Os -optl-L${PREFIX}/lib -optl-Wl,-rpath,${PREFIX}/lib"
-  strip "$PREFIX/bin/shellcheck"
+if [[ "${target_platform}" == "linux-riscv64" ]]; then
+  install shellcheck "${PREFIX}/bin/shellcheck"
+  strip --strip-all "${PREFIX}/bin/shellcheck"
+  exit 0
 fi
 
-rm -rf "${PACKAGE_HOME}"
+export PATH="${BUILD_PREFIX}/ghc-bootstrap/bin:${PATH}"
+export STACK_ROOT="${SRC_DIR}/.stack-root"
+
+# Use the GHC from ghc-bootstrap instead of letting stack download one.
+STACK_OPTS=(
+  --system-ghc
+  --no-install-ghc
+  --snapshot "${STACKAGE_SNAPSHOT}"
+  --extra-include-dirs "${PREFIX}/include"
+  --extra-lib-dirs "${PREFIX}/lib"
+)
+
+ghc --version | grep -F "${GHC_VERSION}"
+
+stack "${STACK_OPTS[@]}" build \
+  --copy-bins --local-bin-path "${PREFIX}/bin" \
+  --ghc-options "-optl-Wl,-rpath,${PREFIX}/lib"
+if [[ "${target_platform}" == osx-* ]]; then
+  # Undefined symbols that are bound lazily cannot be stripped on macOS.
+  "${STRIP}" -x "${PREFIX}/bin/shellcheck"
+else
+  "${STRIP}" --strip-all "${PREFIX}/bin/shellcheck"
+fi
+
+# All Haskell dependencies are linked statically into the binary, ship their licenses.
+bash "${RECIPE_DIR}/collect_licenses.sh"

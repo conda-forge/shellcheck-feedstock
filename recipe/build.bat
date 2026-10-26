@@ -27,27 +27,24 @@ if /I not "%build_platform%"=="%target_platform%" (
 @rem %USERPROFILE%\AppData\Roaming and fails when that folder does not exist.
 mkdir "%USERPROFILE%\AppData\Roaming" || goto :error
 
-set "BINARY_HOME=%PREFIX%\bin"
-set "PACKAGE_HOME=%PREFIX%\share\%PKG_NAME%-%PKG_VERSION%-%PKG_BUILDNUM%"
-set "STACK_ROOT=%PACKAGE_HOME%\stackroot"
+set "PATH=%BUILD_PREFIX%\ghc-bootstrap\bin;%PATH%"
+set "STACK_ROOT=%SRC_DIR%\.stack-root"
 
-mkdir "%BINARY_HOME%"  || goto :error
-mkdir "%PACKAGE_HOME%" || goto :error
-mkdir "%STACK_ROOT%"   || goto :error
+@rem Use the GHC from ghc-bootstrap and the conda-forge MinGW toolchain instead
+@rem of letting stack download GHC and MSYS2.
+set "STACK_OPTS=--system-ghc --no-install-ghc --skip-msys --snapshot %STACKAGE_SNAPSHOT% --extra-include-dirs "%LIBRARY_INC%" --extra-lib-dirs "%LIBRARY_LIB%""
 
-stack --local-bin-path "%PREFIX%\bin" ^
-      --stack-root "%STACK_ROOT%" ^
-      setup ^
-      || goto :error
-stack --local-bin-path "%PREFIX%\bin" ^
-      --stack-root "%STACK_ROOT%" ^
-      install --ghc-options ^
-        "-optl-pthread -optlo-Os" ^
+ghc --version | findstr /C:"%GHC_VERSION%" || goto :error
+
+stack %STACK_OPTS% build ^
+      --copy-bins --local-bin-path "%PREFIX%\bin" ^
       || goto :error
 
-strip "%PREFIX%\bin\shellcheck.exe" || goto :error
+strip --strip-all "%PREFIX%\bin\shellcheck.exe" || goto :error
 
-rmdir /S /Q "%PACKAGE_HOME%" || goto :error
+@rem All Haskell dependencies are linked statically into the binary, ship their
+@rem licenses.
+bash "%RECIPE_DIR%\collect_licenses.sh" || goto :error
 goto :EOF
 
 :error
