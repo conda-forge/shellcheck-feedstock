@@ -45,7 +45,7 @@ export STACK_ROOT="${SRC_DIR}/.stack-root"
 STACK_OPTS=(
   --system-ghc
   --no-install-ghc
-  --snapshot "${STACKAGE_SNAPSHOT}"
+  --resolver "${STACKAGE_SNAPSHOT}"
   --extra-include-dirs "${PREFIX}/include"
   --extra-lib-dirs "${PREFIX}/lib"
 )

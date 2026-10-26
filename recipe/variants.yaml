@@ -1,0 +1,4 @@
+# conda-forge's stack depends on gcc 13 on linux
+c_compiler_version:
+  - if: linux and not riscv64
+    then: "13"

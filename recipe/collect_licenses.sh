@@ -20,7 +20,7 @@ ghc_root=$(to_unix_path "${BUILD_PREFIX}")/ghc-bootstrap
 license_root=$(to_unix_path "${SRC_DIR}")/THIRDPARTY_LICENSES
 
 stack_ls_dependencies() {
-  stack --system-ghc --no-install-ghc --skip-msys --snapshot "${STACKAGE_SNAPSHOT}" \
+  stack --system-ghc --no-install-ghc --skip-msys --resolver "${STACKAGE_SNAPSHOT}" \
     ls dependencies --filter ShellCheck "$@" | tr -d '\r'
 }
 
