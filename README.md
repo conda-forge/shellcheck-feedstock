@@ -5,7 +5,7 @@ Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/shellcheck-feed
 
 Home: https://github.com/koalaman/shellcheck
 
-Package license: GPL-3.0-only
+Package license: GPL-3.0-only AND BSD-3-Clause AND BSD-2-Clause AND MIT AND ISC
 
 Summary: ShellCheck, a static analysis tool for shell scripts
 
