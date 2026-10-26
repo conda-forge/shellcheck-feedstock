@@ -1,0 +1,9 @@
+# Replaces upstream's stack.yaml, which pins lts-18.15 (GHC 8.10.7). This is the
+# newest Stackage LTS snapshot built with GHC 9.10.2, the ghc-bootstrap version
+# used in recipe.yaml.
+snapshot: lts-24.11
+packages:
+  - .
+extra-deps:
+  # splitmix >=0.1.2 needs getentropy() from glibc 2.25, the linux-64 sysroot is 2.17.
+  - splitmix-0.1.1

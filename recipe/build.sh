@@ -38,6 +38,8 @@ if [[ "${target_platform}" == "linux-riscv64" ]]; then
   exit 0
 fi
 
+cp "${RECIPE_DIR}/stack.yaml" stack.yaml
+
 export PATH="${BUILD_PREFIX}/ghc-bootstrap/bin:${PATH}"
 export STACK_ROOT="${SRC_DIR}/.stack-root"
 
@@ -45,12 +47,23 @@ export STACK_ROOT="${SRC_DIR}/.stack-root"
 STACK_OPTS=(
   --system-ghc
   --no-install-ghc
-  --resolver "${STACKAGE_SNAPSHOT}"
   --extra-include-dirs "${PREFIX}/include"
   --extra-lib-dirs "${PREFIX}/lib"
 )
 
 ghc --version | grep -F "${GHC_VERSION}"
+
+if [[ "${target_platform}" == "linux-aarch64" ]]; then
+  # ghc-bootstrap links everything against a shim providing the glibc 2.27/2.28
+  # symbols missing from a glibc 2.17 sysroot. The 2.28 sysroot used here has
+  # them, and the shim is not available at runtime.
+  ghc_settings="${BUILD_PREFIX}/ghc-bootstrap/lib/ghc-${GHC_VERSION}/lib/settings"
+  sed -i 's/ -lghc_glibc_compat//' "${ghc_settings}"
+  if grep -q -- -lghc_glibc_compat "${ghc_settings}"; then
+    echo "ERROR: failed to remove -lghc_glibc_compat from ${ghc_settings}." >&2
+    exit 1
+  fi
+fi
 
 stack "${STACK_OPTS[@]}" build \
   --copy-bins --local-bin-path "${PREFIX}/bin" \
@@ -63,4 +76,4 @@ else
 fi
 
 # All Haskell dependencies are linked statically into the binary, ship their licenses.
-bash "${RECIPE_DIR}/collect_licenses.sh" --system-ghc --no-install-ghc --resolver "${STACKAGE_SNAPSHOT}"
+bash "${RECIPE_DIR}/collect_licenses.sh" --system-ghc --no-install-ghc

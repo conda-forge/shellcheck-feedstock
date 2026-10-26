@@ -1,11 +1,8 @@
 context:
   version: "0.11.0"
-  # GHC from conda-forge's ghc-bootstrap and the newest Stackage LTS snapshot
-  # built with exactly that GHC. Upstream's stack.yaml pins lts-18.15 (GHC
-  # 8.10.7), which has no conda-forge build for osx-arm64. On Windows, stack
-  # installs the snapshot's GHC itself, see build.bat.
+  # Has to match the GHC of the Stackage snapshot in stack.yaml. On Windows,
+  # stack installs that GHC itself, see build.bat.
   ghc_version: "9.10.2"
-  stackage_snapshot: lts-24.11
 
 package:
   name: shellcheck
@@ -27,7 +24,6 @@ build:
   script:
     env:
       GHC_VERSION: ${{ ghc_version }}
-      STACKAGE_SNAPSHOT: ${{ stackage_snapshot }}
 
 requirements:
   build:

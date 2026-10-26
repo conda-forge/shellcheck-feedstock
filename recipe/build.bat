@@ -27,16 +27,15 @@ if /I not "%build_platform%"=="%target_platform%" (
 @rem %USERPROFILE%\AppData\Roaming and fails when that folder does not exist.
 mkdir "%USERPROFILE%\AppData\Roaming" || goto :error
 
+copy /Y "%RECIPE_DIR%\stack.yaml" stack.yaml || goto :error
 set "STACK_ROOT=%SRC_DIR%\.stack-root"
 
 @rem Unlike on unix, stack installs GHC (and MSYS2) itself here. The GHC from
 @rem ghc-bootstrap crashes in its runtime linker when running Template Haskell,
 @rem which ShellCheck uses.
-set "STACK_OPTS=--resolver %STACKAGE_SNAPSHOT%"
+stack setup || goto :error
 
-stack %STACK_OPTS% setup || goto :error
-
-stack %STACK_OPTS% build ^
+stack build ^
       --copy-bins --local-bin-path "%PREFIX%\bin" ^
       || goto :error
 
@@ -44,7 +43,7 @@ strip --strip-all "%PREFIX%\bin\shellcheck.exe" || goto :error
 
 @rem All Haskell dependencies are linked statically into the binary, ship their
 @rem licenses.
-bash "%RECIPE_DIR%\collect_licenses.sh" %STACK_OPTS% || goto :error
+bash "%RECIPE_DIR%\collect_licenses.sh" || goto :error
 goto :EOF
 
 :error
