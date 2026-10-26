@@ -53,6 +53,21 @@ STACK_OPTS=(
 
 ghc --version | grep -F "${GHC_VERSION}"
 
+if [[ "${target_platform}" == "linux-64" ]]; then
+  # ghc-bootstrap's GHC runs against the sysroot's glibc. For Template Haskell
+  # it dlopen()s the libraries listed in the sysroot's libc.so and libpthread.so
+  # linker scripts, which name them by absolute path (/lib64/libc.so.6), so the
+  # image's glibc gets loaded next to the sysroot one, which deadlocks or fails.
+  # With bare names, ld still finds them in its search path (the sysroot) and
+  # dlopen() reuses the already loaded libraries.
+  sysroot_lib="${BUILD_PREFIX}/x86_64-conda-linux-gnu/sysroot/usr/lib64"
+  sed -i -E '/^GROUP/ s#[^ ()]*/##g' "${sysroot_lib}/libc.so" "${sysroot_lib}/libpthread.so"
+  if grep -q '^GROUP.*/' "${sysroot_lib}/libc.so" "${sysroot_lib}/libpthread.so"; then
+    echo "ERROR: failed to rewrite the linker scripts in ${sysroot_lib}." >&2
+    exit 1
+  fi
+fi
+
 if [[ "${target_platform}" == "linux-aarch64" ]]; then
   # ghc-bootstrap links everything against a shim providing the glibc 2.27/2.28
   # symbols missing from a glibc 2.17 sysroot. The 2.28 sysroot used here has
