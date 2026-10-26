@@ -27,16 +27,14 @@ if /I not "%build_platform%"=="%target_platform%" (
 @rem %USERPROFILE%\AppData\Roaming and fails when that folder does not exist.
 mkdir "%USERPROFILE%\AppData\Roaming" || goto :error
 
-set "PATH=%BUILD_PREFIX%\ghc-bootstrap\bin;%PATH%"
 set "STACK_ROOT=%SRC_DIR%\.stack-root"
 
-@rem Use the GHC from ghc-bootstrap and the conda-forge MinGW toolchain instead
-@rem of letting stack download GHC and MSYS2.
-set "STACK_OPTS=--system-ghc --no-install-ghc --skip-msys --resolver %STACKAGE_SNAPSHOT% --extra-include-dirs "%LIBRARY_INC%" --extra-lib-dirs "%LIBRARY_LIB%""
+@rem Unlike on unix, stack installs GHC (and MSYS2) itself here. The GHC from
+@rem ghc-bootstrap crashes in its runtime linker when running Template Haskell,
+@rem which ShellCheck uses.
+set "STACK_OPTS=--resolver %STACKAGE_SNAPSHOT%"
 
-bash "%RECIPE_DIR%\windres.sh" install || goto :error
-
-ghc --version | findstr /C:"%GHC_VERSION%" || goto :error
+stack %STACK_OPTS% setup || goto :error
 
 stack %STACK_OPTS% build ^
       --copy-bins --local-bin-path "%PREFIX%\bin" ^
@@ -46,7 +44,7 @@ strip --strip-all "%PREFIX%\bin\shellcheck.exe" || goto :error
 
 @rem All Haskell dependencies are linked statically into the binary, ship their
 @rem licenses.
-bash "%RECIPE_DIR%\collect_licenses.sh" || goto :error
+bash "%RECIPE_DIR%\collect_licenses.sh" %STACK_OPTS% || goto :error
 goto :EOF
 
 :error

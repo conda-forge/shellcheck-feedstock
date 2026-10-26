@@ -2,8 +2,9 @@
 
 # All Haskell dependencies are linked statically into the shellcheck binary,
 # collect their licenses into ${SRC_DIR}/THIRDPARTY_LICENSES. Cabal installs
-# them into the doc dir of the stack snapshot, or of ghc-bootstrap for the
-# packages that come with GHC.
+# them into the doc dir of the stack snapshot, or of the GHC installation
+# (ghc-bootstrap, or the one stack installed) for the packages that come with
+# GHC. The arguments are passed on to stack.
 
 set -o xtrace -o pipefail -o errexit
 
@@ -16,13 +17,19 @@ to_unix_path() {
 }
 
 stack_root=$(to_unix_path "${STACK_ROOT}")
-ghc_root=$(to_unix_path "${BUILD_PREFIX}")/ghc-bootstrap
+search_dirs=("${stack_root}/snapshots")
+if [[ -d "${stack_root}/programs" ]]; then
+  search_dirs+=("${stack_root}/programs")
+fi
+if [[ -d "$(to_unix_path "${BUILD_PREFIX}")/ghc-bootstrap" ]]; then
+  search_dirs+=("$(to_unix_path "${BUILD_PREFIX}")/ghc-bootstrap")
+fi
 license_root=$(to_unix_path "${SRC_DIR}")/THIRDPARTY_LICENSES
 
 stack_ls_dependencies() {
-  stack --system-ghc --no-install-ghc --skip-msys --resolver "${STACKAGE_SNAPSHOT}" \
-    ls dependencies --filter ShellCheck "$@" | tr -d '\r'
+  stack "${stack_opts[@]}" ls dependencies --filter ShellCheck "$@" | tr -d '\r'
 }
+stack_opts=("$@")
 
 stack_ls_dependencies --license
 for pkg in $(stack_ls_dependencies --separator -); do
@@ -34,7 +41,7 @@ for pkg in $(stack_ls_dependencies --separator -); do
   fi
   license_dir="${license_root}/${pkg}"
   mkdir -p "${license_dir}"
-  find "${stack_root}/snapshots" "${ghc_root}" -type d -path "*/doc/*" -name "${doc_pkg}" \
+  find "${search_dirs[@]}" -type d -path "*/doc/*" -name "${doc_pkg}" \
     -exec find {} -maxdepth 1 -type f \( -iname 'LICEN[CS]E*' -o -iname 'COPYING*' \) \; \
     | while read -r license_file; do
       cp "${license_file}" "${license_dir}/"

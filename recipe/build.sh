@@ -63,4 +63,4 @@ else
 fi
 
 # All Haskell dependencies are linked statically into the binary, ship their licenses.
-bash "${RECIPE_DIR}/collect_licenses.sh"
+bash "${RECIPE_DIR}/collect_licenses.sh" --system-ghc --no-install-ghc --resolver "${STACKAGE_SNAPSHOT}"

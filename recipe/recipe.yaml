@@ -2,7 +2,8 @@ context:
   version: "0.11.0"
   # GHC from conda-forge's ghc-bootstrap and the newest Stackage LTS snapshot
   # built with exactly that GHC. Upstream's stack.yaml pins lts-18.15 (GHC
-  # 8.10.7), which has no conda-forge build for osx-arm64 or win-64.
+  # 8.10.7), which has no conda-forge build for osx-arm64. On Windows, stack
+  # installs the snapshot's GHC itself, see build.bat.
   ghc_version: "9.10.2"
   stackage_snapshot: lts-24.11
 
@@ -30,39 +31,32 @@ build:
 
 requirements:
   build:
-    - if: win
-      then:
-        - ${{ compiler('m2w64_c') }}
-        - ${{ stdlib('m2w64_c') }}
     - if: unix and not riscv64
       then:
         - ${{ compiler('c') }}
         - ${{ stdlib('c') }}
-    - if: not riscv64
-      then:
         - ghc-bootstrap ==${{ ghc_version }}
-        - stack >=3.7
+    - if: not riscv64
+      then: stack >=3.7
     - if: linux or win
       then: binutils
     # GHC links with `clang --target=<arch>-apple-darwin`, for which clang looks
     # up an unprefixed `ld` and would otherwise find the system linker.
     - if: osx
       then: ld64
-    # For collect_licenses.sh and windres.sh
+    # For collect_licenses.sh
     - if: win
       then:
         - m2-bash
         - m2-coreutils
         - m2-findutils
-        - m2-grep
-        - m2-sed
   host:
-    - if: not riscv64
+    - if: unix and not riscv64
       then:
         - libffi
         - libiconv
     # GHC uses its native bignum backend on macOS
-    - if: linux and not riscv64 or win
+    - if: linux and not riscv64
       then: gmp
 
 tests:
