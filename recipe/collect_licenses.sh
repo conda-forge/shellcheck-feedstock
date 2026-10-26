@@ -16,10 +16,13 @@ to_unix_path() {
   fi
 }
 
-stack_root=$(to_unix_path "${STACK_ROOT}")
-search_dirs=("${stack_root}/snapshots")
-if [[ -d "${stack_root}/programs" ]]; then
-  search_dirs+=("${stack_root}/programs")
+stack_opts=("$@")
+
+search_dirs=("$(to_unix_path "${STACK_ROOT}")/snapshots")
+# Where stack installs GHC, if it does (not with --system-ghc)
+programs_dir=$(to_unix_path "$(stack "${stack_opts[@]}" path --programs | tr -d '\r')")
+if [[ -d "${programs_dir}/ghc-${GHC_VERSION}" ]]; then
+  search_dirs+=("${programs_dir}/ghc-${GHC_VERSION}")
 fi
 if [[ -d "$(to_unix_path "${BUILD_PREFIX}")/ghc-bootstrap" ]]; then
   search_dirs+=("$(to_unix_path "${BUILD_PREFIX}")/ghc-bootstrap")
@@ -29,7 +32,6 @@ license_root=$(to_unix_path "${SRC_DIR}")/THIRDPARTY_LICENSES
 stack_ls_dependencies() {
   stack "${stack_opts[@]}" ls dependencies --filter ShellCheck "$@" | tr -d '\r'
 }
-stack_opts=("$@")
 
 stack_ls_dependencies --license
 for pkg in $(stack_ls_dependencies --separator -); do
