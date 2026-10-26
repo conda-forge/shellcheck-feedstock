@@ -1,0 +1,2 @@
+# Checked by shellcheck in the tests, which flags CRLF line endings
+*.sh text eol=lf

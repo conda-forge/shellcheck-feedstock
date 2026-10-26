@@ -1,3 +1,5 @@
+DOCKER_PLATFORM:
+- linux/riscv64
 channel_sources:
 - conda-forge
 channel_targets:

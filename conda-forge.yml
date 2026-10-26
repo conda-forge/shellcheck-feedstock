@@ -11,3 +11,8 @@ conda_build:
   pkg_format: '2'
 conda_install_tool: pixi
 conda_build_tool: rattler-build
+# On linux-aarch64, GHC's interpreter (used for Template Haskell) runs against
+# the image's glibc and loads C libraries from the sysroot, so the image's glibc
+# has to match c_stdlib_version (2.28).
+os_version:
+  linux_aarch64: alma8
