@@ -1,4 +1,11 @@
-# conda-forge's stack depends on gcc 13 on linux
+# ghc-bootstrap is set up to compile and link with clang on unix
+c_compiler:
+  - if: linux and not riscv64
+    then: clang
 c_compiler_version:
   - if: linux and not riscv64
-    then: "13"
+    then: "21"
+# conda-forge's stack requires sysroot_linux-aarch64 2.28
+c_stdlib_version:
+  - if: linux and aarch64
+    then: "2.28"

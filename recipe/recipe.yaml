@@ -41,19 +41,21 @@ requirements:
     - if: not riscv64
       then:
         - ghc-bootstrap ==${{ ghc_version }}
-        - stack
+        - stack >=3.7
     - if: linux or win
       then: binutils
     # GHC links with `clang --target=<arch>-apple-darwin`, for which clang looks
     # up an unprefixed `ld` and would otherwise find the system linker.
     - if: osx
       then: ld64
-    # For collect_licenses.sh
+    # For collect_licenses.sh and windres.sh
     - if: win
       then:
         - m2-bash
         - m2-coreutils
         - m2-findutils
+        - m2-grep
+        - m2-sed
   host:
     - if: not riscv64
       then:

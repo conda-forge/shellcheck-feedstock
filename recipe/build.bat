@@ -27,17 +27,14 @@ if /I not "%build_platform%"=="%target_platform%" (
 @rem %USERPROFILE%\AppData\Roaming and fails when that folder does not exist.
 mkdir "%USERPROFILE%\AppData\Roaming" || goto :error
 
-@rem GHC fails to decode localized gcc diagnostics (typographic quotes) when
-@rem linking, make gcc stick to ASCII.
-set "LC_ALL=C"
-set "LANG=C"
-
 set "PATH=%BUILD_PREFIX%\ghc-bootstrap\bin;%PATH%"
 set "STACK_ROOT=%SRC_DIR%\.stack-root"
 
 @rem Use the GHC from ghc-bootstrap and the conda-forge MinGW toolchain instead
 @rem of letting stack download GHC and MSYS2.
 set "STACK_OPTS=--system-ghc --no-install-ghc --skip-msys --resolver %STACKAGE_SNAPSHOT% --extra-include-dirs "%LIBRARY_INC%" --extra-lib-dirs "%LIBRARY_LIB%""
+
+bash "%RECIPE_DIR%\windres.sh" install || goto :error
 
 ghc --version | findstr /C:"%GHC_VERSION%" || goto :error
 
