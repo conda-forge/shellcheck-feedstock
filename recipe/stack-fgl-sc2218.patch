@@ -1,0 +1,13 @@
+--- a/stack.yaml
++++ b/stack.yaml
+@@ -8,7 +8,9 @@
+ packages:
+ - '.'
+ # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
+-extra-deps: []
++# Match the release binary's fgl for SC2218 (koalaman/shellcheck#3546).
++extra-deps:
++- fgl-5.8.3.0@sha256:34e9599efc17bd19593eb212b511517cf54c8f1b5f215fc59a397a8a01fe9bd0,3796
+ 
+ # Override default flag values for local packages and extra-deps
+ flags: {}

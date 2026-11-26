@@ -10,6 +10,8 @@ source:
     then:
       url: https://github.com/koalaman/shellcheck/archive/v${{ version }}.tar.gz
       sha256: 8b07554f92e4fbfc33f1539a1f475f21c6503ceae8f806efcc518b1f529f7102
+      patches:
+        - stack-fgl-sc2218.patch
   - if: linux and x86_64
     then:
       url: https://github.com/koalaman/shellcheck/releases/download/v${{ version }}/shellcheck-v${{ version }}.linux.x86_64.tar.xz
@@ -24,7 +26,7 @@ source:
       sha256: 693c987777e7b524dd311d9b8c704885a39c889c9804bb1ef1fd29b48567b0b3
 
 build:
-  number: 2
+  number: 3
   dynamic_linking:
     missing_dso_allowlist:
       - if: osx
@@ -55,6 +57,10 @@ tests:
   - script:
       - shellcheck --version
       - shellcheck || true
+      - shellcheck tests/defined-functions.sh
+    files:
+      recipe:
+        - tests/defined-functions.sh
 
 about:
   homepage: https://github.com/koalaman/shellcheck
